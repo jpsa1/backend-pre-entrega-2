@@ -49,14 +49,30 @@ class ProductManagerMongo {
         
         if(!limit) limit=10
         if(!page) page=1
-        if(!query) query=undefined
+        if(!query) query=""
         if(!sort) sort={ price: -1 }
 
         let regExpresion = new RegExp(query, 'i')
 
         let products = await productModel.paginate({title: { $regex: regExpresion }}, {limit:limit, page:page, sort:sort, lean: true})
 
-        return products.docs
+        let objetoProducts = {
+                status:"success/error",
+                payload: products.docs,
+                totalPages: products.totalPages,
+                prevPage: products.prevPage,
+                nextPage: products.nextPage,
+                page: page,
+                hasPrevPage: products.hasPrevPage,
+                hasNextPage: products.hasNextPage
+        }
+
+        objetoProducts.prevLink = products.hasPrevPage?`http://localhost:8080/?page=${products.prevPage}&limit=${limit}&sort=${sort.price}&query=${query}`:''
+        objetoProducts.nextLink = products.hasNextPage?`http://localhost:8080/?page=${products.nextPage}&limit=${limit}&sort=${sort.price}&query=${query}`:''
+        
+        console.log(objetoProducts)
+
+        return objetoProducts
 
     }
 

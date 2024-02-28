@@ -27,8 +27,29 @@ CartRouter.post("/:cid/product/:pid", async (req, res) => {
     let pid = req.params.pid
     res.send(await cartsMg.addProductToCart(cid, pid))
 
+
     //filesystem
     // res.send(await carts.addProductToCart(cid, pid))
+})
+
+CartRouter.put("/:cid/product/:pid", async (req, res) => {
+    let cid = req.params.cid
+    let pid = req.params.pid
+    let quantity = req.query.quantity
+    res.send(await cartsMg.upDateQuantity(cid, pid, quantity))
+})
+
+// DELETE ALL PRODUCTS - Elimina todos los productos del carrito
+CartRouter.delete("/:id", async (req, res) => {
+    let id = req.params.id
+    res.send(await cartsMg.deleteAllProductsInCart(id))
+})
+
+// DELETE ONE PRODUCT - Elimina del carrito el producto seleccionado
+CartRouter.delete("/:cid/product/:pid", async (req, res) => {
+    let cid = req.params.cid
+    let pid = req.params.pid
+    res.send(await cartsMg.DeleteOneProductInCart(cid, pid))
 })
 
 //PUT
@@ -38,10 +59,14 @@ CartRouter.post("/:cid/product/:pid", async (req, res) => {
 //     res.send(await carts.updateCart(id, cart))
 // })
 
-//DELETE
+//DELETE - Elimina del carrito el producto seleccionado
 // CartRouter.delete("/:id", async (req, res) => {
 //     let id = req.params.id
 //     res.send(await carts.deleteCart(id))
 // })
+
+
+
+
 
 export default CartRouter

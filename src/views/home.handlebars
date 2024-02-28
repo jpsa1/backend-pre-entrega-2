@@ -1,6 +1,6 @@
 <h1>LISTA DE PRODUCTOS</h1>
 
-{{#each products}}
+{{#each products.payload}}
     <h2>{{this.title}}</h2>
     <h3>USD {{this.price}}</h3>
     <p>{{this.description}}</p>
