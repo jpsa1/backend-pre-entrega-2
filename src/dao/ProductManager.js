@@ -21,7 +21,6 @@ class ProductManagerMongo {
         try{
             return await productModel.findOne({ id: id })
         } catch {
-            console.log("Paso por el catch")
             return null   
         }
         // return await productModel.findOne({_id:id}).lean()
@@ -70,6 +69,7 @@ class ProductManagerMongo {
         objetoProducts.prevLink = products.hasPrevPage?`http://localhost:8080/?page=${products.prevPage}&limit=${limit}&sort=${sort.price}&query=${query}`:''
         objetoProducts.nextLink = products.hasNextPage?`http://localhost:8080/?page=${products.nextPage}&limit=${limit}&sort=${sort.price}&query=${query}`:''
         
+        console.log('objetoProducts: '+typeof(objetoProducts))
         console.log(objetoProducts)
 
         return objetoProducts

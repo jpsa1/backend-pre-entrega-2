@@ -15,13 +15,40 @@ ViewsRouter.get("/", async (req,res) => {
     let query = req.query.query
     let sort = req.query.sort
 
-    
+    res.send(await productMg.getProducts(limit, page, query, sort))
+
+})
+
+ViewsRouter.get("/products", async (req,res) => {
+    let limit = req.query.limit
+    let page = req.query.page
+    let query = req.query.query
+    let sort = req.query.sort
+
     let allProducts = await productMg.getProducts(limit, page, query, sort)
 
+    console.log('allProducts: '+allProducts)
 
-    res.render("home", {
+    res.render("products", {
         title: "Product Manager",
         products: allProducts
+    })
+})
+
+ViewsRouter.get("/products/:id", async (req,res) => {
+    let id = req.params.id
+    
+    console.log('id: '+ id)
+
+    let product = await productMg.getProductsById(id)
+    
+    product = product.toObject()
+
+    console.log("product: "+product)
+
+    res.render("detailProduct", {
+        title: `Producto - ${product.title}`,
+        products: product
     })
 })
 
