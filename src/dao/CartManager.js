@@ -78,6 +78,19 @@ class CartManagerMongo {
         return cartById.products
     }
 
+    //Actualiza TODOS los productos dentro del carrito
+    updateAllProductsInCart = async (id, products) => {
+        let cartById = await this.exist(id)
+        if (!cartById) return "El carrito no existe"
+
+        cartById.products = products
+
+        let result = this.cartUpDate(cartById.id, cartById)
+
+        return result
+    }
+
+    //SOLO se actualiza la cantidad del producto
     upDateQuantity = async (cid, pid, quantity) => {
         let cartById = await this.exist(cid)
         if (!cartById) return "El carrito no existe"
@@ -100,18 +113,6 @@ class CartManagerMongo {
 
         let result = this.cartUpDate(cartById.id, cartById)
         
-        // if(productExist) {
-        //     productExist.quantity++;
-        //     await cartModel.updateOne(
-        //         { id: cid, 'products.product': pid },
-        //         { $set: { 'products.$.quantity': productExist.quantity } },
-        //         { new: true }
-        //     );
-        // } else {
-        //     cartById.products.push({product: productById.id, quantity: 1})
-        //     await cartById.save()
-        // }
-
         return "Cantidad actualizada del producto en el carrito"
     }
 

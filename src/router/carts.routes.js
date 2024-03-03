@@ -32,6 +32,17 @@ CartRouter.post("/:cid/product/:pid", async (req, res) => {
     // res.send(await carts.addProductToCart(cid, pid))
 })
 
+//Se actualiza todos los productos dentro del carrito
+CartRouter.put("/:id", async (req, res) => {
+    let id = req.params.id
+    let products = req.body
+    res.send(await cartsMg.updateAllProductsInCart(id, products))
+
+    //filesystem
+    // res.send(await carts.getCartsById(id))
+})
+
+//Solo se actualiza la cantidad del producto
 CartRouter.put("/:cid/product/:pid", async (req, res) => {
     let cid = req.params.cid
     let pid = req.params.pid
