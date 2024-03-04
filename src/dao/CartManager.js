@@ -27,14 +27,14 @@ class CartManagerMongo {
 
     exist = async (id) => {
         try{
-            return await cartModel.findOne({id: id})
+            return await cartModel.findById(id)
         } catch {
             return null   
         }
     }
 
     cartUpDate = async (id, cart) => {
-        await cartModel.updateOne({id:id}, cart)
+        await cartModel.findByIdAndUpdate(id, cart)
         return "Carrito actualizado"
     }
 
@@ -48,20 +48,27 @@ class CartManagerMongo {
         if (!cartById) return "El carrito no existe"
 
         let productById = await productAllMongo.exist(pid)
-
         if (!productById) return "El producto no existe"
 
-        let productExist = cartById.products.find(data => data.product == productById.id)
+        // let productExist = cartById.products.find(data => data.equals(productById._id))
+        
+        console.log('pid')
+        
+        let productExist = cartById.products.find(data => {
+            return data.product == pid 
+        })
+
+        console.log('productExist: '+productExist)
 
         if(productExist) {
             productExist.quantity++;
             await cartModel.updateOne(
-                { id: cid, 'products.product': pid },
+                { _id: cid, 'products.product': pid },
                 { $set: { 'products.$.quantity': productExist.quantity } },
                 { new: true }
             );
         } else {
-            cartById.products.push({product: productById.id, quantity: 1})
+            cartById.products.push({product: productById._id, quantity: 1})
             await cartById.save()
         }
 
@@ -73,9 +80,16 @@ class CartManagerMongo {
     }
 
     getCartsById = async (id) => {
-        let cartById = await this.exist(id)
+        
+        // let cartById = await this.exist(id)
+        let cartById = await cartModel.findById(id).populate('products.product')
+
+        
+        console.log('cartById.products: '+cartById)
+        
         if (!cartById) return "El carrito no existe"
         return cartById.products
+
     }
 
     //Actualiza TODOS los productos dentro del carrito
@@ -85,7 +99,8 @@ class CartManagerMongo {
 
         cartById.products = products
 
-        let result = this.cartUpDate(cartById.id, cartById)
+        let result = cartModel.findByIdAndUpdate(id, cartById)
+        // let result = this.cartUpDate(cartById.id, cartById)
 
         return result
     }
@@ -98,20 +113,19 @@ class CartManagerMongo {
         let productById = await productAllMongo.exist(pid)
         if (!productById) return "El producto no existe"
 
-        let productExist = cartById.products.find(data => data.product == productById.id)
+        let productExist = cartById.products.find(data => data.product == pid)
+        console.log('productExist: '+productExist)
 
         if(!productExist) return "El producto no esta en el carrito"
 
         productExist.quantity = quantity
 
-        let newProducts = cartById.products.filter(data => data.product != productById.id)
+        let newProducts = cartById.products.filter(data => data.product != pid)
         newProducts.push(productExist)
 
         cartById.products = newProducts
 
-        console.log('cartById: '+cartById)
-
-        let result = this.cartUpDate(cartById.id, cartById)
+        let result = this.cartUpDate(cid, cartById)
         
         return "Cantidad actualizada del producto en el carrito"
     }
@@ -122,7 +136,7 @@ class CartManagerMongo {
 
         cartById.products = []
 
-        let result = this.cartUpDate(cartById.id, cartById)
+        let result = this.cartUpDate(id, cartById)
 
         return result
     }
@@ -134,11 +148,11 @@ class CartManagerMongo {
         let productById = await productAllMongo.exist(pid)
         if (!productById) return "El producto no existe"
 
-        let upDateProducts = cartById.products.filter(data => data.product != productById.id)
+        let upDateProducts = cartById.products.filter(data => data.product != pid)
 
         cartById.products = upDateProducts
 
-        let result = this.cartUpDate(cartById.id, cartById)
+        let result = this.cartUpDate(cid, cartById)
 
         return result
 

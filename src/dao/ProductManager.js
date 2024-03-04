@@ -19,7 +19,7 @@ class ProductManagerMongo {
 
     exist = async (id) => {
         try{
-            return await productModel.findOne({ id: id })
+            return await productModel.findById(id)
         } catch {
             return null   
         }
@@ -68,9 +68,6 @@ class ProductManagerMongo {
 
         objetoProducts.prevLink = products.hasPrevPage?`http://localhost:8080/?page=${products.prevPage}&limit=${limit}&sort=${sort.price}&query=${query}`:''
         objetoProducts.nextLink = products.hasNextPage?`http://localhost:8080/?page=${products.nextPage}&limit=${limit}&sort=${sort.price}&query=${query}`:''
-        
-        console.log('objetoProducts: '+typeof(objetoProducts))
-        console.log(objetoProducts)
 
         return objetoProducts
 
@@ -86,7 +83,9 @@ class ProductManagerMongo {
         let productById = await this.exist(id)
         if(!productById) return "Producto no encontrado"
 
-        await productModel.updateOne({id:id}, product)
+        // await productModel.updateOne({id:id}, product)
+
+        await productModel.findByIdAndUpdate(id, product)
 
         return "Producto actualizado exitosamente" 
     }
@@ -94,8 +93,11 @@ class ProductManagerMongo {
     deleteProducts = async (id) => {
         
         let existeProducts = await this.exist(id)
+
+        console.log('existeProducts: '+existeProducts)
+
         if (existeProducts) {
-            await productModel.deleteOne({id:id})
+            await productModel.findByIdAndDelete(id)
             return "Producto eliminado"
         }else{
             return 'Producto no existe'

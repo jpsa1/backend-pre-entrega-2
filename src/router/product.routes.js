@@ -25,6 +25,7 @@ ProductRouter.get("/", async (req, res) => {
     // res.send(await product.getProducts(limitProduct))
 })
 
+//Agregar productos
 ProductRouter.post("/", async(req, res) => {
     let newProduct = req.body
     res.send(await productMg.addProducts(newProduct))

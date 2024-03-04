@@ -14,6 +14,7 @@ CartRouter.get("/:id", async (req, res) => {
     // res.send(await carts.getCartsById(id))
 })
 
+//CREA UN NUEVO CARRITO
 CartRouter.post("/", async (req, res) => {
     res.send(await cartsMg.addCart())
     
